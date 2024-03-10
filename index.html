@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="logoc.png" type="image/x-icon">
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+
+        .container {
+            max-width: 500px;
+            width: 90%;
+            padding: 40px 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        input[type="text"],
+        select {
+            width: calc(100% - 20px);
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 18px;
+            color: #333;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #ff416c;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #ff416c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover {
+            background-color: #ff4b2b;
+        }
+
+        #downloadLink {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        #downloadLink a {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: #3bd786;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        #downloadLink a:hover {
+            background-color: #29b670;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Custom checkbox styles */
+        .checkbox-container {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            padding-left: 30px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 22px;
+            width: 22px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .checkbox-container:hover .checkmark {
+            border-color: #666;
+        }
+
+        .checkbox-container input:checked~.checkmark {
+            background-image: linear-gradient(to bottom right, #4CAF50, #2196F3);
+            border-color: #4CAF50;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked~.checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Overlay styles */
+        .overlay {
+            display: none;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 30px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        <input type="text" id="videoUrl" placeholder="Enter YouTube video URL">
+        <select id="resolution">
+            <option value="highest">Highest Available</option>
+            <option value="360p">360p</option>
+            <option value="480p">480p</option>
+            <option value="720p">720p</option>
+            <option value="1080p">1080p</option>
+            <option value="1440p">1440p (2K)</option>
+            <option value="2160p">2160p (4K)</option>
+        </select>
+        <label class="checkbox-container">Download Audio Only
+            <input type="checkbox" id="audioOnlyCheckbox">
+            <span class="checkmark"></span>
+        </label>
+        <br>
+        <br>
+        <button onclick="downloadVideo()" id="downloadButton">Download</button>
+        <div id="downloadLink"></div>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="loadingAnimation" class="loader"></div> <!-- Loading animation -->
+    </div>
+
+    <script>
+        function downloadVideo() {
+            var videoUrl = document.getElementById("videoUrl").value.trim();
+            var resolution = document.getElementById("resolution").value;
+            var audioOnly = document.getElementById("audioOnlyCheckbox").checked;
+
+            // Check if the URL is empty
+            if (!videoUrl) {
+                displayErrorMessage("Please enter a valid YouTube video URL");
+                return;
+            }
+
+            // Construct the download link
+            var downloadLink = `http://localhost:3000/download?videoUrl=${encodeURIComponent(videoUrl)}&resolution=${resolution}`;
+            if (audioOnly) {
+                downloadLink += "&audioOnly=true";
+            }
+
+            // Disable the download button and show loading animation
+            var downloadButton = document.getElementById("downloadButton");
+            downloadButton.disabled = true;
+            document.getElementById("loadingAnimation").style.display = "block";
+
+            // Open the download link in a new window
+            var downloadWindow = window.open(downloadLink, "_blank");
+
+            // Check if the download window is closed every 500ms
+            var checkDownloadComplete = setInterval(function () {
+                if (downloadWindow.closed) {
+                    // Re-enable the download button and hide the loading animation
+                    downloadButton.disabled = false;
+                    document.getElementById("loadingAnimation").style.display = "none";
+
+                    // Stop checking for download completion
+                    clearInterval(checkDownloadComplete);
+                }
+            }, 500);
+        }
+
+        function displayErrorMessage(message) {
+            var errorMessageContainer = document.getElementById("errorMessage");
+            errorMessageContainer.innerText = message;
+            errorMessageContainer.style.display = "block";
+        }
+    </script>
+</body>
+
+</html>
