@@ -9,23 +9,18 @@
     "author": "Chickaboo",
     "license": "MIT",
     "dependencies": {
-      "@ffmpeg-installer/ffmpeg": "^1.0.31",
-      "electron": "^16.0.0",
-      "express": "^4.17.2",
+      "@ffmpeg-installer/ffmpeg": "^1.1.0",
+      "electron": "^29.1.6",
+      "express": "^4.19.2",
       "fluent-ffmpeg": "^2.1.2",
-      "ytdl-core": "^5.4.0"
-    },
-    "devDependencies": {},
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/yourusername/YoutubeDownloader.git"
+      "ytdl-core": "^4.11.5"
     },
     "bugs": {
-      "url": "https://github.com/yourusername/YoutubeDownloader/issues"
+      "url": "https://github.com/Chickaboo/YoutubeDownloader/issues"
     },
     "homepage": "https://github.com/Chickaboo/YoutubeDownloader#readme",
     "build": {
-      "appId": "com.example.chickaboo-youtube-downloader",
+      "appId": "com.CoCreateInstance.chickaboo-youtube-downloader",
       "mac": {
         "icon": "logoC.png"
       },
